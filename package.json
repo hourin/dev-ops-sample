@@ -9,6 +9,7 @@
   "author": "lifewood",
   "license": "MIT",
   "workspaces": [
-    "frontend"
+    "frontend",
+    "backend"
   ]
 }
