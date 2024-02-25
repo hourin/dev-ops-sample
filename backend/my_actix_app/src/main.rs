@@ -1,9 +1,5 @@
 use actix_web::{get, App, HttpResponse, HttpServer};
 
-#[get("/api")]
-async fn hello() -> HttpResponse {
-    HttpResponse::Ok().body("Hello, Actix-web!")
-}
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
