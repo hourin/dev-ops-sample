@@ -1,4 +1,4 @@
-use actix_web::{get, App, HttpRequest, HttpResponse, HttpServer, Responder};
+use actix_web::{get, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 use mysql::prelude::*;
 use mysql::*;
 use serde::{Deserialize, Serialize};
@@ -52,11 +52,32 @@ async fn get_memo_by_id(req: HttpRequest) -> impl Responder {
     }
 }
 
+
+#[post("/api/memos")]
+async fn create_memo(req_body: web::Json<Memo>) -> HttpResponse {
+    let url = "mysql://ユーザー名:パスワード@ホスト名:3306/データベース名";
+    let pool = Pool::new(url).unwrap();
+    let mut conn = pool.get_conn().unwrap();
+
+    let memo = req_body.into_inner();
+
+    conn.exec_drop(
+        "INSERT INTO MEMOS (TITLE, MEMO) VALUES (:title, :memo)",
+        params! {
+            "title" => memo.title,
+            "memo" => memo.memo,
+        },
+    ).unwrap();
+
+    HttpResponse::Created().finish()
+}
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     HttpServer::new(|| App::new()
             .service(get_memos)
             .service(get_memo_by_id)
+            .service(create_memo)
         )
         .bind("0.0.0.0:8080")?
         .run()
