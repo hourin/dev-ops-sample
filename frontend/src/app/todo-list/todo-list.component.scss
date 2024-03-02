@@ -1,0 +1,66 @@
+h1 {
+  border: 1px solid black;
+  margin: 2% auto;
+  text-align: center;
+  width: 80%;
+}
+
+button {
+  font-size: 16px;
+  height: 60px;
+  width: 90px;
+}
+
+.box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ヘッダ固定 */
+.fix-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.data-table {
+  height: 320px;
+  overflow-y: auto;
+  margin: 0 auto;
+  width: 80%;
+}
+
+.button-area {
+  margin-top: 3%;
+  text-align: center;
+  width: 80%;
+
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+/* 各ボタンエリアの幅を調整 */
+.button-area > div {
+  width: 30%;
+  display: flex;
+  justify-content: center; /* 中央揃えに変更 */
+  gap: 10px;
+
+  &.left-side {
+    justify-content: flex-start; /* 左揃えに変更 */
+  }
+
+  &.center-position {
+    justify-content: center; /* 中央揃えに変更 */
+  }
+
+  &.right-side {
+    justify-content: flex-end; /* 右揃えに変更 */
+  }
+}
+
+.button-area button {
+  margin-right: 5px;
+}
