@@ -1,0 +1,90 @@
+h1 {
+  border: 1px solid black;
+  margin: 2% auto;
+  text-align: center;
+  width: 80%;
+}
+
+.box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+button {
+  font-size: 16px;
+  height: 60px;
+  width: 90px;
+}
+
+.button-area {
+  margin-top: 3%;
+  text-align: center;
+  width: 80%;
+
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+/* 各ボタンエリアの幅を調整 */
+.button-area > div {
+  width: 50%;
+  display: flex;
+  justify-content: center; /* 中央揃えに変更 */
+  gap: 10px;
+
+  &.left-side {
+    justify-content: flex-start; /* 左揃えに変更 */
+  }
+
+  &.right-side {
+    justify-content: flex-end; /* 右揃えに変更 */
+  }
+}
+
+.button-area button {
+  margin-right: 5px;
+}
+
+/* バリデーションエラー用スタイル */
+.invalid-form {
+  border: 1px solid red;
+}
+
+.invalid-button {
+  border: 1px solid silver;
+  color: silver;
+  font-weight: bold;
+}
+
+/* 入力フォームスタイル */
+.todo-form {
+  margin: 0 auto;
+  width: 80%;
+
+  h2 {
+    border: 1px solid black;
+    box-sizing: border-box;
+    font-size: x-large;
+    height: 32px;
+    margin-bottom: -1px;
+    text-align: center;
+    width: 100%;
+  }
+
+  input,
+  textarea {
+    box-sizing: border-box;
+    display: inline-block;
+    flex-direction: column;
+    font-size: x-large;
+    resize: vertical;
+    width: 100%;
+  }
+
+  textarea {
+    height: 230px;
+    margin-top: -1px;
+  }
+}
