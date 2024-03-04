@@ -1,1 +1,43 @@
-<p>todo works!</p>
+<div class="box">
+  <h1>メモ作成</h1>
+
+  <div class="todo-form">
+    <form [formGroup]="todoForm">
+      <h2>タイトル</h2>
+      <input type="hidden" formControlName="id" />
+      <input
+        matInput
+        type="text"
+        formControlName="title"
+        [ngClass]="{
+          'invalid-form': checkTitle
+        }"
+      />
+      <textarea
+        matInput
+        formControlName="memo"
+        [ngClass]="{
+          'invalid-form': checkMemo
+        }"
+      >
+      </textarea>
+    </form>
+  </div>
+
+  <div class="button-area">
+    <div class="left-side">
+      <button (click)="backToList()">戻る</button>
+    </div>
+    <div class="right-side">
+      <button
+        (click)="saveMemo()"
+        [disabled]="todoForm.invalid"
+        [ngClass]="{
+          'invalid-button': todoForm.invalid
+        }"
+      >
+        保存
+      </button>
+    </div>
+  </div>
+</div>
