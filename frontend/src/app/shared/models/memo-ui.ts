@@ -1,6 +1,5 @@
-export interface MemoUi {
+import { Memo } from './memo';
+
+export interface MemoUi extends Memo {
   checked: boolean;
-  id: number;
-  title: string;
-  memo: string;
 }
