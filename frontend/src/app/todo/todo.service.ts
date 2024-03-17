@@ -15,4 +15,12 @@ export class TodoService {
       this.api.get(id).pipe(map((item: Memo) => ({ ...item, checked: true })))
     );
   }
+
+  async create(body: Memo): Promise<void> {
+    await firstValueFrom(this.api.create(body));
+  }
+
+  async update(body: Memo): Promise<void> {
+    await firstValueFrom(this.api.update(body));
+  }
 }
