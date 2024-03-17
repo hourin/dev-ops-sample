@@ -1,6 +1,5 @@
+import { NgClass } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { MatInputModule } from '@angular/material/input';
 import {
   FormControl,
   FormGroup,
@@ -8,8 +7,11 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { NgClass } from '@angular/common';
+import { MatInputModule } from '@angular/material/input';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DUMMY_DATA } from '../dummy-data';
+import { Memo } from '../shared/models';
+import { TodoService } from './todo.service';
 
 @Component({
   selector: 'app-todo',
@@ -21,6 +23,8 @@ import { DUMMY_DATA } from '../dummy-data';
 export default class TodoComponent implements OnInit {
   router = inject(Router);
   route = inject(ActivatedRoute);
+  service = inject(TodoService);
+
   mode: string = 'new';
   memoId = 0;
   dummyData = DUMMY_DATA;
@@ -66,15 +70,7 @@ export default class TodoComponent implements OnInit {
       // 編集処理
       this.mode = 'edit';
       this.memoId = Number(this.route.snapshot.paramMap.get('id'));
-      const target = this.dummyData.filter(
-        (memo) => memo.id === this.memoId
-      )[0];
-
-      this.todoForm.patchValue({
-        id: this.memoId,
-        title: target.title,
-        memo: target.memo,
-      });
+      this.getMemo();
     }
   }
 
@@ -86,10 +82,35 @@ export default class TodoComponent implements OnInit {
   saveMemo(): void {
     const startMsg = this.mode === 'new' ? '新規作成します。' : '更新します。';
     const msg = startMsg + 'よろしいですか？';
+    const form = this.todoForm.getRawValue();
+    const request: Memo = {
+      id: form.id == null ? 0 : form.id,
+      title: form.title == null ? '' : form.title,
+      memo: form.memo == null ? '' : form.memo,
+    };
+
     if (window.confirm(msg)) {
-      // TODO: API 実装予定
-      // 現時点では画面遷移のみ
-      this.router.navigate(['/']);
+      if (this.mode === 'new') {
+        // 新規作成
+        this.service.create(request).then(() => this.router.navigate(['/']));
+      } else {
+        // 編集
+        this.service.update(request).then(() => this.router.navigate(['/']));
+      }
     }
+  }
+
+  private getMemo(): void {
+    if (this.memoId == null) {
+      return;
+    }
+
+    this.service.get(this.memoId.toString()).then((_) => {
+      this.todoForm.patchValue({
+        id: this.memoId,
+        title: _.title,
+        memo: _.memo,
+      });
+    });
   }
 }
