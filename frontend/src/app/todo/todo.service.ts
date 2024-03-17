@@ -18,8 +18,11 @@ export class TodoService {
 
   async get(id: string) {
     const memoData = await firstValueFrom(
+      // Memo => MemoUi に変換
       this.api.get(id).pipe(map((item: Memo) => ({ ...item, checked: true })))
     );
+
+    // MemoUi をストリームに流す
     this.memoData$.next(memoData);
   }
 }
