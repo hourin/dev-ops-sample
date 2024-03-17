@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { BehaviorSubject, firstValueFrom, map } from 'rxjs';
+import { firstValueFrom, map } from 'rxjs';
 import { Memo, MemoUi } from '../shared/models';
 import { ApiService } from '../shared/service/api.service';
 
@@ -9,19 +9,14 @@ import { ApiService } from '../shared/service/api.service';
 export class TodoListService {
   api = inject(ApiService);
 
-  moemoList$ = new BehaviorSubject<MemoUi[]>([]);
-
-  async getAll() {
-    const memoList = await firstValueFrom(
-      // Memo[] => MemoUi[] に変換
+  async getAll(): Promise<MemoUi[]> {
+    // Memo[] => MemoUi[] に変換して返却
+    return await firstValueFrom(
       this.api.getAll().pipe(
         map((memos: Memo[]) => {
           return memos.map((item: Memo) => ({ ...item, checked: false }));
         })
       )
     );
-
-    // MemoUi[] をストリームに流す
-    this.moemoList$.next(memoList);
   }
 }
