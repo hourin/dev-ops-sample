@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { BehaviorSubject, firstValueFrom, map } from 'rxjs';
+import { firstValueFrom, map } from 'rxjs';
 import { Memo, MemoUi } from '../shared/models';
 import { ApiService } from '../shared/service/api.service';
 
@@ -9,20 +9,10 @@ import { ApiService } from '../shared/service/api.service';
 export class TodoService {
   api = inject(ApiService);
 
-  memoData$ = new BehaviorSubject<MemoUi>({
-    checked: false,
-    id: 0,
-    title: '',
-    memo: '',
-  });
-
-  async get(id: string) {
-    const memoData = await firstValueFrom(
-      // Memo => MemoUi に変換
+  async get(id: string): Promise<MemoUi> {
+    // Memo => MemoUi に変換して返却
+    return await firstValueFrom(
       this.api.get(id).pipe(map((item: Memo) => ({ ...item, checked: true })))
     );
-
-    // MemoUi をストリームに流す
-    this.memoData$.next(memoData);
   }
 }
