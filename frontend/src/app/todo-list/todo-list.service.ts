@@ -9,6 +9,7 @@ import { ApiService } from '../shared/service/api.service';
 export class TodoListService {
   api = inject(ApiService);
 
+  // メモ一覧取得 API 呼び出し
   async getAll(): Promise<MemoUi[]> {
     // Memo[] => MemoUi[] に変換して返却
     return await firstValueFrom(
@@ -18,5 +19,10 @@ export class TodoListService {
         })
       )
     );
+  }
+
+  // メモ削除 API 呼び出し
+  async delete(id: string): Promise<void> {
+    await firstValueFrom(this.api.delete(id));
   }
 }
