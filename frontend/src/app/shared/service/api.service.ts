@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, map } from 'rxjs';
-import { Memo, MemoUi } from '../models';
+import { Observable } from 'rxjs';
+import { Memo } from '../models';
 
 @Injectable({
   providedIn: 'root',
@@ -11,22 +11,16 @@ export class ApiService {
 
   apiUrl = 'サーバーアドレス/api/memos';
 
-  getAll(): Observable<Array<MemoUi>> {
+  getAll(): Observable<Array<Memo>> {
     // ダミーで、./assets/json 配下の json をレスポンスとして取得
     this.apiUrl = './assets/json/memo-list.json';
-    return this.http.get<Array<Memo>>(this.apiUrl).pipe(
-      map((memos: Memo[]) => {
-        return memos.map((item: Memo) => ({ ...item, checked: false }));
-      })
-    );
+    return this.http.get<Array<Memo>>(this.apiUrl);
   }
 
-  get(id: string): Observable<MemoUi> {
+  get(id: string): Observable<Memo> {
     // ダミーで、./assets/json 配下の json をレスポンスとして取得
     this.apiUrl = './assets/json/memo.json';
-    return this.http
-      .get<MemoUi>(this.apiUrl + `/${id}`)
-      .pipe(map((item: Memo) => ({ ...item, checked: true })));
+    return this.http.get<Memo>(this.apiUrl + `/${id}`);
   }
 
   create(body: Memo) {
