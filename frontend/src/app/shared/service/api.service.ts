@@ -1,8 +1,7 @@
-import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, map, tap } from 'rxjs';
-import { MemoUi } from '../models/memo-ui';
-import { Memo } from '../models/memo';
+import { Injectable, inject } from '@angular/core';
+import { Observable, map } from 'rxjs';
+import { Memo, MemoUi } from '../models';
 
 @Injectable({
   providedIn: 'root',
