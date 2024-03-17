@@ -1,10 +1,10 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MemoUi } from '../shared/models/memo-ui';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { Router } from '@angular/router';
 import { DUMMY_DATA } from '../dummy-data';
+import { MemoUi } from '../shared/models';
 
 @Component({
   selector: 'app-todo-list',
