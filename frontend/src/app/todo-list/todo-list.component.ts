@@ -1,10 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { Router } from '@angular/router';
-import { DUMMY_DATA } from '../dummy-data';
 import { MemoUi } from '../shared/models';
+import { TodoListService } from './todo-list.service';
 
 @Component({
   selector: 'app-todo-list',
@@ -13,28 +13,34 @@ import { MemoUi } from '../shared/models';
   templateUrl: './todo-list.component.html',
   styleUrl: './todo-list.component.scss',
 })
-export default class TodoListComponent {
-  dummyData = DUMMY_DATA;
+export default class TodoListComponent implements OnInit {
   displayedColumns: string[] = ['checked', 'id', 'title', 'memo'];
-  dataSource = new MatTableDataSource<MemoUi>(this.dummyData);
 
   router = inject(Router);
+  service = inject(TodoListService);
+
+  memoList: MemoUi[] = [];
+  dataSource = new MatTableDataSource<MemoUi>();
 
   memoFilter = () =>
-    this.dummyData
+    this.memoList
       .filter((data) => data.checked === true)
       .map((data) => data.id);
+
+  ngOnInit(): void {
+    this.getAll();
+  }
 
   /**
    * 全選択処理
    * @returns{void}
    */
   checkAll(): void {
-    this.dummyData.forEach((data) => (data.checked = true));
+    this.memoList.forEach((data) => (data.checked = true));
   }
 
   clearCheckAll(): void {
-    this.dummyData.forEach((data) => (data.checked = false));
+    this.memoList.forEach((data) => (data.checked = false));
   }
 
   deleteMemo(): void {
@@ -46,10 +52,9 @@ export default class TodoListComponent {
     }
 
     if (window.confirm('削除します。よろしいですか？')) {
-      this.dummyData = this.dummyData.filter(
-        (item) => !deleteTarget.includes(item.id)
-      );
-      this.dataSource = new MatTableDataSource<MemoUi>(this.dummyData);
+      const id = deleteTarget[0].toString();
+      // 削除が成功したら、メモ一覧を再取得・更新する
+      this.service.delete(id).then(() => this.getAll());
     }
   }
 
@@ -70,5 +75,12 @@ export default class TodoListComponent {
     }
 
     this.router.navigate(['edit', editTarget[0]]);
+  }
+
+  private getAll(): void {
+    this.service.getAll().then((_) => {
+      this.memoList = _;
+      this.dataSource = new MatTableDataSource<MemoUi>(this.memoList);
+    });
   }
 }

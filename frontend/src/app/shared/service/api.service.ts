@@ -20,7 +20,10 @@ export class ApiService {
   get(id: string): Observable<Memo> {
     // ダミーで、./assets/json 配下の json をレスポンスとして取得
     this.apiUrl = './assets/json/memo.json';
-    return this.http.get<Memo>(this.apiUrl + `/${id}`);
+
+    // 暫定で下記実装にしている。正しいエンドポイントには、`/${id}` が含まれる
+    return this.http.get<Memo>(this.apiUrl);
+    // return this.http.get<Memo>(this.apiUrl + `/${id}`);
   }
 
   create(body: Memo) {
@@ -38,6 +41,9 @@ export class ApiService {
   delete(id: string) {
     // ダミーで、./assets/json 配下の json をレスポンスとして取得
     this.apiUrl = './assets/json/delete.json';
-    return this.http.delete(this.apiUrl + `/${id}`);
+
+    // 暫定で下記実装にしている。正しいエンドポイントには、`/${id}` が含まれる
+    return this.http.delete(this.apiUrl);
+    // return this.http.delete(this.apiUrl + `/${id}`);
   }
 }
