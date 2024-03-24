@@ -9,7 +9,6 @@ import {
 } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DUMMY_DATA } from '../dummy-data';
 import { Memo } from '../shared/models';
 import { TodoService } from './todo.service';
 
@@ -27,7 +26,6 @@ export default class TodoComponent implements OnInit {
 
   mode: string = 'new';
   memoId = 0;
-  dummyData = DUMMY_DATA;
 
   todoForm = new FormGroup({
     id: new FormControl<number | null>(null),
