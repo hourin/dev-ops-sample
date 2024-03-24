@@ -1,6 +1,6 @@
 {
-  "/api/": {
-    "target": "http://ik1-438-51017.vs.sakura.ne.jp/",
+  "/api": {
+    "target": "http://ik1-438-51017.vs.sakura.ne.jp",
     "secure": false,
     "changeOrigin": true
   }
