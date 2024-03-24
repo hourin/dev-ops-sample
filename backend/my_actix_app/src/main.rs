@@ -118,7 +118,7 @@ async fn main() -> std::io::Result<()> {
             .wrap(
                 Cors::default()
                     .allow_any_origin()
-                    .allowed_methods(vec!["GET", "POST", "OPTIONS"])
+                    .allowed_methods(vec!["GET", "POST", "PATCH", "DELETE", "OPTIONS"])
                     .allowed_headers(vec![
                         "Authorization",
                         "Accept",
