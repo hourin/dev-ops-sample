@@ -29,7 +29,7 @@ export class ApiService {
   }
 
   update(body: Memo) {
-    return this.http.patch(this.apiUrl, body, this.httpOptions);
+    return this.http.patch(this.apiUrl + `/${body.id}`, body, this.httpOptions);
   }
 
   delete(id: string) {
