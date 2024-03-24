@@ -1,4 +1,5 @@
 use actix_web::{get, post, patch, delete, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
+use actix_cors::Cors;
 use mysql::prelude::*;
 use mysql::*;
 use serde::{Deserialize, Serialize};
@@ -52,7 +53,6 @@ async fn get_memo_by_id(req: HttpRequest) -> impl Responder {
     }
 }
 
-
 #[post("/api/memos")]
 async fn create_memo(req_body: web::Json<Memo>) -> HttpResponse {
     let url = "mysql://ユーザー名:パスワード@ホスト名:3306/データベース名";
@@ -93,6 +93,7 @@ async fn update_memo(id: web::Path<i32>, req_body: web::Json<Memo>) -> HttpRespo
     HttpResponse::Ok().finish()
 }
 
+
 #[delete("/api/memos/{id}")]
 async fn delete_memo(id: web::Path<i32>) -> HttpResponse {
     let memo_id = id.into_inner();
@@ -114,6 +115,16 @@ async fn delete_memo(id: web::Path<i32>) -> HttpResponse {
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     HttpServer::new(|| App::new()
+            .wrap(
+                Cors::default()
+                    .allow_any_origin()
+                    .allowed_methods(vec!["GET", "POST", "OPTIONS"])
+                    .allowed_headers(vec![
+                        "Authorization",
+                        "Accept",
+                    ])
+                    .max_age(3600)
+            )
             .service(get_memos)
             .service(get_memo_by_id)
             .service(create_memo)
