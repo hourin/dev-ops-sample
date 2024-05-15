@@ -1,0 +1,95 @@
+name: Deploy Angular and Rust to Sakura VPS
+
+on:
+  push:
+    # master or main にプッシュされた時
+    branches: [master, main]
+
+jobs:
+  deploy:
+    # ubuntu v22.04 を指定
+    # latest を指定すると警告が出る場合がある為
+    runs-on: ubuntu-22.04
+
+    steps:
+      # Github リポジトリから checkout
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # ubuntu をアップデート
+      # 後述の Node インストールの最新情報を更新する為
+      - name: update ubuntu
+        run: |
+          sudo apt-get -y update
+
+      # Node, NPM のインストール
+      - name: Install Node.js v20.x
+        run: |
+          curl -sL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+          sudo apt-get install -y nodejs
+          node -v
+          npm -v
+
+      # Rust のインストール
+      - name: Install Rust v1.77
+        run: |
+          curl -sSL https://sh.rust-lang.org/install.sh | bash
+          source $HOME/.cargo/env
+          rustc -V
+
+      # Angular アプリケーション（フロントエンド TODO アプリ）のビルド
+      - name: Build Angular application
+        run: |
+          cd frontend
+          npm install
+          npx ng build --configuration production
+
+      # Rust アプリケーション（バックエンド AP サーバー）のビルド
+      - name: Build Rust application
+        run: |
+          cd backend/my_actix_app
+          cargo build --release
+
+      # Github secrets に登録したキーの出力（確認用、省略可能）
+      # ワークフロー実行中に下記の様に出力されていれば、OKです。
+      # SCP_HOST variable: **
+      - name: Check environment variables
+        run: |
+          echo "SCP_HOST variable: ${{ secrets.SCP_HOST }}"
+          echo "SCP_USERNAME variable: ${{ secrets.SCP_USERNAME }}"
+          echo "SCP_PASSWORD variable: ${{ secrets.SCP_PASSWORD }}"
+          echo "ANGULAR_BUILD_DIR variable: ${{ secrets.ANGULAR_BUILD_DIR }}"
+          echo "ANGULAR_DEPLOY_DIR variable: ${{ secrets.ANGULAR_DEPLOY_DIR }}"
+          echo "RUST_BUILD_DIR variable: ${{ secrets.RUST_BUILD_DIR }}"
+          echo "RUST_DEPLOY_DIR variable: ${{ secrets.RUST_DEPLOY_DIR }}"
+
+      # Angular アプリケーション（フロントエンド TODO アプリ）をさくら VPS にデプロイ
+      - name: Deploy Angular app
+        uses: cross-the-world/ssh-scp-ssh-pipelines@latest
+        with:
+          host: ${{ secrets.SCP_HOST }}
+          user: ${{ secrets.SCP_USERNAME }}
+          pass: ${{ secrets.SCP_PASSWORD }}
+          scp: |
+            ./${{ secrets.ANGULAR_BUILD_DIR }}/* => ${{ secrets.ANGULAR_DEPLOY_DIR }}
+
+      # Rust アプリケーション（バックエンド AP サーバー）をさくら VPS にデプロイ
+      - name: Deploy Rust app
+        uses: cross-the-world/ssh-scp-ssh-pipelines@latest
+        with:
+          host: ${{ secrets.SCP_HOST }}
+          user: ${{ secrets.SCP_USERNAME }}
+          pass: ${{ secrets.SCP_PASSWORD }}
+          scp: |
+            ./${{ secrets.RUST_BUILD_DIR }}/my_actix_app => ~/${{ secrets.RUST_DEPLOY_DIR }}/
+
+      # Rust アプリケーション（バックエンド AP サーバー）をさくら VPS で、起動
+      - name: Run Rust application
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SCP_HOST }}
+          username: ${{ secrets.SCP_USERNAME }}
+          password: ${{ secrets.SCP_PASSWORD }}
+          script: |
+            cd ~/${{ secrets.RUST_DEPLOY_DIR }}/
+            nohup ./my_actix_app > /dev/null 2>&1 &
